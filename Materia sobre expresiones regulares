@@ -1,0 +1,103 @@
+"""
+Metacaracteres:
+\d      - Digitos (0-9)
+\D      - No digitos (0-9)
+\w      - Caracter de palabra (a-z, A-Z, 0-9, _)
+\W      - No caracter de palabra
+\s      - Espacio en blanco (espacio, tab, nueva linea)
+\S      - No espacio en blanco (espacio, tab, nueva linea)
+.       - Cualquier caracter excepto nueva linea (codicioso - greedy)
+\       - Cancela caracteres especiales
+
+^       - Inicio de una cadena de caracteres (string)
+$       - Fin de una cadena de caracteres
+
+Cuantificadores:
+*       - 0 o más (codicioso - greedy)
++       - 1 o más (codicioso - greedy)
+?       - 0 or 1 (perezoso - lazy)
+{3}     - Numero exacto
+{n,}    - Numero n+
+{3,4}   - Rango de números (Minimo, Maximo)
+
+( )     - Grupos
+[]      - Encuentra caracteres en corchetes
+[^ ]    - Encuentra caracteres que no están dentro de corchetes
+|       - Condicional O
+
+\b      - Limite de palabra
+\B      - No limite de palabra
+
+\1      - Referencias
+------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------
+
+import re
+
+texto = '''Hola Mundo.
+Me gusta Python!!!!!
+Mi primer numero de la suerte es 987-654-321
+Mi segundo numero de la suerte es 876-543-210
+Mi tercero numero de la suerte es 765-432-100
+Mi cuarto numero de la suerte es 123-456-123-123-456
+'''
+
+# buscar el primer emparejamiento
+print(re.search(r'\d', texto))
+# flags
+print(re.search(r'^hola', texto, flags=re.I)) #ignorar minuscula/mayuscula
+
+# buscar todos los emparejamientos
+print(re.findall(r'\d', texto))
+
+# Casos comunes
+# 1 Encontrar puntuación
+print(re.findall(r'[^\w\s]', texto))
+
+# 2 Validar una fecha
+texto = '''
+13-04-2021
+2021-13-04
+2021-04-13
+'''
+print(re.findall(r'\d{2}-\d{2}-\d{4}', texto))
+
+# 3 Validar un usuario
+# condiciones: 4-14 y solo numeros o letras
+
+texto = '''
+usuario10
+abc
+10
+'''
+
+print(re.findall(r'[a-z0-9]{4,14}', texto))
+
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
+
+match(): Determina si la Er coincide en la cadena de texto
+search():Escanea una cadena, buscando cualqueir ubicacion donde coincida la ER.Devuelve un objeto match
+findall():Enceuntra todas las subcadenas donde coincide la ER y las retorna como una lista
+finditer():Encuentra todas las subcadenas donde coincide la ER y las retorna como un objeto iterador
+
+[] Indica un cjto de caracteres. Se usa "-" para indicar un rango.Algunmos caracteres especiales pierden su significado ejemplo: [a-z]
+.  Cualquier caracter excepto un salto de linea   ...ar (Es como comodin )
+^   Coincide con el comienzo de la cadena 
+$   Coincide con el final de la cadena 
+|   Una "or"                  ejemplo [a-z]|[A-Z]
+* 0 o mas repeticiones de la ER predecente   ejem .*er
++ 1 o mas repeticiones de la ER predecente ejem .+er
+{} numero exacto de repeticiones. Puede tener numero maximo y minimo    ejem .{5}er
+?     0 o 1 repeticion de la ER precedente. Prioriza el minimo 
+()     Captura y agrupar
+
+\d      - Digitos (0-9)
+\D      - No digitos (0-9)
+\w      - Caracter de palabra (a-z, A-Z, 0-9, _)
+\W      - No caracter de palabra
+\s      - Espacio en blanco (espacio, tab, nueva linea)
+\S      - No espacio en blanco (espacio, tab, nueva linea)
+
+"""
