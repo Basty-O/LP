@@ -1,0 +1,98 @@
+%   PRIMERA PREGUNTA
+
+% El objetivo es dada 2 listas,concatenara estas 2 listas y retornará
+% una lista con los elementos en las posiciones impares
+con([_],_,[]).
+con([],L,L).
+con([_,X|L],M,[X|N]):-con(L,M,N).
+
+
+% El objetivo es dadas 2 listas,concatenara estas 2 listas y retornará
+% una lista con los elementos en las posiciones pares
+con2([X],_,[X]).
+con2([],L,L).
+con2([X,_|L],M,[X|N]):-con2(L,M,N).
+
+
+% El objetivo es retornar 2 listas , una con los elementos en las
+% posiciones pares y otra con las posiciones impares, donde haré uso de
+% las funciones escritas arriba, la manera en que las usaré será la
+% Lista que nos dan concatenarla con una lista vacia y así las funciones
+% anteriores retornaran las listas con los elementos en las posiciones
+% pares e impares
+sepparimpar([C1,C2|L],P,I):- con2([C1,_|L],[],P),con([_,C2|L],[],I).
+
+
+% Ejemplos de la tarea:
+% sepparimpar([1,5,3,2,4,6],P,I).
+% sepparimpar(L,[1,2,3],[4,5,6]).
+
+
+% ------------------------------------------------------------------------
+
+%   SEGUNDA PREGUNTA
+
+% El objetivo es que dada una Lista, ésta contenga todos los numeros
+% enteros en el intervalo[Min,Max).
+% Lo que hice fue verificar si el min estaba dentro de la Lista, e ir
+% incrementando min hasta llegar que min fuera igual a max, que es el
+% caso de corte.
+
+todosrango(_,X,X).
+todosrango(Lista,Min,Max):- member(Min,Lista),Z is Min+1 ,todosrango(Lista,Z,Max).
+
+
+% Obs: Para el 2do y 3er al ejecutar hay que ir presionando ; para poder
+% ver el resultado completo, presionar ; hasta que muestre todos los
+% resultados.
+% Ejemplos dados:
+% todosrango([1,5,3,2,4,6],3,7).
+% todosrango([1,5,3,2,4,6],X,Y).
+% length(L,3),todosrango(L,1,3).
+
+
+% ------------------------------------------------------------------------
+
+%   TERCERA PREGUNTA
+
+% El objetivo es que verifica si el rango dado es el maximo posible,
+% esto lo hago comparando si el primero elemento de la lista coincide
+% con el min y si el segundo coincide con min + 1 y asi hasta que la
+% lista quede vacia por lo que en ese punto el min deberia ser igual al
+% max.
+aux([],X,X).
+aux([C|R],X,Y):- C=X,Z is X+1,aux(R,Z,Y).
+
+% Hago principal uso de la funcion auxiliar anteriormente explicada,
+% pero antes de llamar aux ,ordeno la lista para que así coincida y
+% funcione correctamente
+rangomax(Lista,Min,Max):- sort(Lista,P),aux(P,Min,Max).
+
+
+% Ejemplos dados:
+% rangomax([1,5,3,2,4,6],1,7).
+% rangomax([1,5,3,2,4,6],3,7).
+% rangomax([1,5,3,2,4,6],X,Y).
+
+% ------------------------------------------------------------------------
+
+%   CUARTA PREGUNTA
+
+% Para lograr lo solicitado lo que hice fue calcular cuanto era el valor
+% del promedio entre Min y Max, luego lo aproximo para que todo
+% funcione de manera correcta, calculo el largo de las 2 listas que
+% deben contener elementos restando el rango final menos el rango
+% inicial, para una seria el promedio menos el min y para la otra max
+% menos el promedio, luego hago uso de la funcion 2 todosrango con
+% length para obtener las combinaciones y uso la primera funcion para
+% crear la lista dada las listas con los elementos que van en las
+% posicones pares y las impares.
+
+chicograndechico(P,Min,Max):- Q is (Max+Min)/2,E is ceil(Q) ,R is E-Min ,T is Max-E,length(C,R),todosrango(C,Min,E),length(B,T),todosrango(B,E,Max),sepparimpar(P,C,B).
+
+
+% Obs: Para poder ver todos los resultados se debe ir presinando ; una
+% vez ejecutado
+% Ejemplos dados:
+% chicograndechico(L,1,5).
+% chicograndechico(L,1,6).
