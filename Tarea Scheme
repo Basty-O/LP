@@ -1,0 +1,331 @@
+#lang scheme (current-namespace(make-base-namespace))
+
+;FUNCIONES USADAS EN LA PRIMERA FUNCION
+
+;EL objetivo de esta funcion es eliminar 1 elemento x de la lista1 y retorna lista2 que tendrá todos los elementos de lista1 menos el elemento x
+;Los parámetros de esta funcion son;
+
+;  x: el cual es el elemento a borrar
+;  Lista1: es la lista con los elementos 
+;  Lista2: será una lista vacia que ira guardando elementos
+
+(define (eliminarv2 x Lista1 Lista2)
+  (if (null? Lista1)
+      Lista2
+      (if (= x (car Lista1))
+          (append Lista2 (cdr Lista1))
+          (eliminarv2 x (cdr Lista1) (append Lista2 ((lambda (x) (list x)) (car Lista1))))))
+)
+
+;El objetivo de esta funcion es que a la lista Lista0 le elimina todos los elementos que contiene la lista Lista1
+;Lista0 debe ser mayor a Lista1
+;Los parámetros de esta funcion son:
+
+;  Lista0: lista a la cual se le eliminan los elementos
+;  Lista1: lista con los elementos que se deben eliminar de la Lista0
+
+(define (borrarelemlista Lista0 Lista1)
+  (let erase ((Listan Lista0) (Listan1 Lista1))
+    (if (null? Listan)
+        Listan
+        (if (null? Listan1)
+            Listan
+            (erase (eliminarv2 (car Listan1) Listan '()) (cdr Listan1)))
+        )
+    )
+)
+
+;El objetivo de esta funcion es dado un n , crea una lista desde 0 hasta n-1
+;Recibe como parametro:
+;  n: el cual es un numero 
+(define (crear_lista n)
+  (if(= n 1)
+     '(0)
+     (cons (- n 1) (crear_lista (- n 1))))
+)
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;FUNCIONES USADAS EN LA SEGUNDA FUNCION
+
+;Recursion cola
+
+;El objetivo de esta funcion es dada una lista y un numero n, si un elemento de esta lista es mayor que n, agregará un 1 a una lista que inicialmente será vacia
+;Recibe como parámetros:
+;  lista: es una lista con los elementos
+;  n: numero con el que se compararan los elementos
+;  listaf: lista inicialmente vacia que irá guardando elementos(1 o 0)
+(define (posicionesM lista n listaf )
+  (if (null? lista)
+      listaf
+      (if (>(car lista) n)
+          (posicionesM (cdr lista) n (append listaf '(1)))
+          (posicionesM (cdr lista) n (append listaf '(0)))))
+  )
+
+;El objetivo de esta funcion es lo mismo que la de arriba pero en el caso que los elementos sean menor que un numero n
+;Recibe como parámetros:
+;  lista: lista con los elementos
+;  n: numero con el que se comparan los elementos
+;  listaf: lista inicialmente vacia que irá guardando elementos(1 o 0)
+(define (posicionesm lista n listaf )
+  (if (null? lista)
+      listaf
+      (if (< (car lista) n)
+          (posicionesm (cdr lista) n (append listaf '(1)))
+          (posicionesm (cdr lista) n (append listaf '(0)))))
+  )
+
+;El objetivo de esta funcion es una vez utilizadas algunas de las funciones anteriores nos quedará una lista solo con elementos que pueden ser 1 o 0 entonces
+;lo que hace esta funcion es que busca donde estan los 1 y guarda esas posiciones en una lista que inicialmente será vacia
+;Recibe como parametros;
+;  lista: lista conformada solo por ceros y unos
+;  lista2: lista inicialmente vacia que ira guardando numeros
+;  n: numero que funciona como contador, inicialmente es 0 
+
+(define(n_de_posC lista lista2 n)
+  (if (null? lista)
+      lista2
+      (if(= (car lista) 0)
+         (n_de_posC (cdr lista)lista2(+ n 1))
+         (n_de_posC (cdr lista)(append lista2 (list n))(+ n 1))))
+  )
+
+;El objetivo de esta es utilizar las funciones antes explicadas, obteniendo el resultado que queremos 
+; Los parámetros serán:
+;  lista: lista que contiene los elementos
+;  n: numero con que el cual se compararan los elementos de la lista (si es que son mayores que n)
+(define (Mayor lista n)
+  (n_de_posC(posicionesM lista n '()) '() 0)
+  )
+
+;El objetivo de esta es utilizar las funciones antes explicadas, obteniendo el resultado que queremos 
+; Los parámetros serán:
+;  lista: lista que contiene los elementos
+;  n: numero con que el cual se compararan los elementos de la lista (si es que son menores que n)
+(define (menor lista n)
+  (n_de_posC(posicionesm lista n '()) '() 0)
+  )
+
+;****************************
+;Recursion Simple
+
+;El objetivo de esta funcion es dada una lista, la invierte
+;Recibe como parametro:
+;  lista: lista con los elementos
+(define (invertir lista)
+  (cond
+    [(empty? lista)empty]
+    [else(append (invertir(cdr lista)) (list(car lista)))])
+  )
+
+
+;El objetivo es el mismo que la funcion posicionesM pero esta funcion esta implementada con recursion simple
+;Recibe como parámetros:
+;  lista: es una lista con los elementos
+;  n: numero con el que se compararan los elementos
+(define (posicionesMS lista n)
+  (if (null? lista)
+      '()
+      (if (> (car lista) n)
+          (append (posicionesMS (cdr lista )n) '(1))
+          (append (posicionesMS (cdr lista )n) '(0))))
+  )
+
+;EL objetivo es el mismo que la funcion posicionm pero esta funcion esta implementada con recursion simple
+;Recibe como parámetros:
+;  lista: es una lista con los elementos
+;  n: numero con el que se compararan los elementos
+(define (posicionesmS lista n )
+  (if (null? lista)
+      '()
+      (if (< (car lista) n)
+         (append (posicionesmS (cdr lista) n)  '(1))
+          (append(posicionesmS (cdr lista) n) '(0))))
+  )
+
+;El objetivo es el mismo que n_de_posC pero esta funcion esta implementada con recursion simple
+;Recibe como parametros:
+;  lista: lista conformada solo por ceros y unos
+;  n: numero que funciona como contador, inicialmente es 0
+(define(n_de_posS lista n)
+  (if (null? lista)
+      '()
+      (if(= (car lista) 0)
+         (append '() (n_de_posS (cdr lista) (+ n 1)))
+         (append (list n) (n_de_posS (cdr lista) (+ n 1))
+  ))))
+
+;El objetivo de esta es utilizar las funciones antes explicadas, obteniendo el resultado que queremos 
+; Los parámetros serán:
+;  lista: lista que contiene los elementos
+;  n: numero con que el cual se compararan los elementos de la lista (si es que son mayores que n)
+(define (MayorV2 lista n)
+  (n_de_posS(invertir(posicionesMS lista n)) 0)
+  )
+
+;El objetivo de esta es utilizar las funciones antes explicadas, obteniendo el resultado que queremos 
+; Los parámetros serán:
+;  lista: lista que contiene los elementos
+;  n: numero con que el cual se compararan los elementos de la lista (si es que son menores que n)
+(define (menorV2 lista n)
+  (n_de_posS(invertir(posicionesmS lista n )) 0)
+  )
+
+
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------
+;FUNCIONES USADAS EN LA TERCERA FUNCION
+
+;El objetivo de esta funcion es dada una lista1, retorna una lista con el ultimo elemento de la lista1
+;Recibe como parametros:
+;  lista: lista con los elementos
+;  listanum: lista inicialmente vacia, será donde se guarde el ultimo elemento
+(define (ultimo_num lista listanum)
+  (if (null? (cdr lista))
+             (append listanum lista)
+             (ultimo_num (cdr lista) listanum))
+  )
+
+;recursion cola
+
+;El objetivo de esta funcion es dada dos listas, una contendra los elementos y la otra contendra elementos que representan las posiciones por cada numero en la
+;lista, si su ındice esta en lis_pos entonces se le debe aplicar la funcion que se nos da como parámetro, en caso contrario el numero se mantiene igual
+;Recibe como parametro:
+;  lista: lista con los elementos
+;  n: numero que funciona como contador que inicialmente es un 0
+;  lis_pos: lista que contiene elementos que representan las posiciones
+;  listaf: lista inicalmente vacia que guardara los elementos
+;  funcion: una funcion que se debe aplicar en el caso que algun elemento corresponda con el indice que este en lis_pos
+(define (posiciones2 lista n lis_pos listaf funcion)
+  (if (null? lista) 
+      listaf
+      (if(null? lis_pos)
+         (posiciones2 (cdr lista) (+ n 1) (ultimo_num lista '()) (append listaf (list(car lista))) funcion)
+         (if (= n (car lis_pos)) 
+         (posiciones2 (cdr lista) (+ n 1) (cdr lis_pos) (append listaf (list (funcion(car lista))))funcion)
+         (posiciones2 (cdr lista) (+ n 1) lis_pos (append listaf (list (car lista)))funcion))))
+  )
+
+;recursion simple
+
+;El objetivo de esta funcion es la misma que la explicada anteriormente pero esta funcion esta implementada con recursion simple
+;Recibe como parametro:
+;  lista: lista con los elementos
+;  n: numero que funciona como contador que inicialmente es un 0
+;  lis_pos: lista que contiene elementos que representan las posiciones
+;  funcion: una funcion que se debe aplicar en el caso que algun elemento corresponda con el indice que este en lis_pos
+
+(define (posiciones2S lista n lis_pos funcion)
+  (if (null? lista) 
+      '()
+      (if(null? lis_pos)
+         (append (list (car lista)) (posiciones2S(cdr lista) (+ n 1)(ultimo_num lista '()) funcion))
+         (if (= n (car lis_pos)) 
+         (append (list(funcion(car lista))) (posiciones2S (cdr lista) (+ n 1) (cdr lis_pos)funcion))
+         (append (list(car lista)) (posiciones2S (cdr lista) (+ n 1) lis_pos funcion)))))
+  )
+
+;-----------------------------------------------------------------------------------------------------------------------------------------------------------
+;FUNCIONES USADAS EN LA CUARTA FUNCION 
+
+;El objetivo de esta funcion es dada una lista, retorna una lista con la cantidad de elementos
+;Recibe como parametro:
+;  lista: lista con los elementos
+;  total: lista inicialmente vacia que se le agregara la cantidad de elementos de la lista
+;  n: numero que sirve como contador inicialmente es 0
+
+(define( cantidad_total lista total n)
+  (if(null? lista)
+     (append total (list n))
+     (cantidad_total (cdr lista) total (+ n 1)))
+  )
+
+
+;------------------------------------------------------------------------------------------------------------------------------------------------------------
+;FUNCION USADAS EN LA QUINTA FUNCION
+
+;Para que funcionara el eval tuve que agregarle (current-namespace(make-base-namespace)) a #lang scheme
+
+;El objetivo de esta funcion es dada una lista de lista, buscaremos una posicion especifica (pos), retornando una lista con la lista en esa posicion.
+;Recibe como parametro:
+;   lista: contiene una lista con listas
+;   pos: numero que representa la posicion del elemento dentro de la lista de listas que queremos
+;   n: numero que funciona como contador inicialmente en 0
+;   listaf: lista inicialmente vacia donde se guardara los elementos que queremos
+(define(elegir_lista lista pos n listaf)
+  (if (= n pos)
+      (append listaf (car lista))
+      (elegir_lista (cdr lista) pos (+ n 1) listaf))
+  )
+
+;------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+;funcion 1
+
+(define (inverso lista n)
+  (borrarelemlista (crear_lista n) lista )
+)
+
+(inverso '(1 3 7) 10)
+
+;funcion 2
+
+(define (umbral_simple lista umbral tipo)
+  (cond
+    ((eqv? tipo #\M)(Mayor lista umbral))
+    ((eqv? tipo #\m)(menor lista umbral)))
+)
+
+(define (umbral_cola lista umbral tipo)
+  (cond
+    ((eqv? tipo #\M)(MayorV2 lista umbral))
+    ((eqv? tipo #\m)(menorV2 lista umbral)))
+  )
+
+(umbral_simple '(15 2 1 3 27 5 10) 5 #\M)
+(umbral_cola '(15 2 1 3 27 5 10) 5 #\m)
+
+
+;funcion 3
+
+(define (modsel_simple lista seleccion f)
+  (posiciones2 lista 0 (sort seleccion <) '() f)
+)
+
+(define (modsel_cola lista seleccion f)
+  (posiciones2S lista 0 (sort seleccion <) f)
+)
+
+(modsel_simple '(15 2 1 3 27 5 10) '(0 4 6) (lambda (x) (modulo x 2)))
+
+(modsel_simple '(15 2 1 3 27 5 10) '(3 1 2) (lambda (x) (+ x 5)))
+
+
+;funcion 4
+
+(define (estables lista umbral fM fm)
+  (append
+   (cantidad_total (umbral_cola (modsel_cola lista (umbral_cola lista umbral #\M)fM) umbral #\M) '() 0)
+   (cantidad_total(umbral_cola (modsel_cola lista (umbral_cola lista umbral #\m)fm) umbral #\m) '() 0))
+)
+
+(estables '(15 2 1 3 27 5 10) 5 (lambda (x) (/ x 2)) (lambda (x) (* x 2)))
+
+
+;funcion 5
+
+(define (query lista pos op params)
+    (if(= op 1)(umbral_cola (elegir_lista lista pos 0 '()) (elegir_lista params 0 0'()) (elegir_lista params 1 0 '()))
+       (if(= op 2)(modsel_cola(elegir_lista lista pos 0 '()) (elegir_lista params 0 0 '()) (eval(elegir_lista params 1 0 '())))
+          (if(= op 3)(estables (elegir_lista lista pos 0 '()) (elegir_lista params 0 0 '()) (eval(elegir_lista params 1 0 '())) (eval(elegir_lista params 2 0 '())))
+             0
+   ))))
+
+
+(query '((0 1 2 3 4) (4 3 2 1 0) (15 2 1 3 27 5 10)) 1 1 '(1 #\M))
+
+(query '((0 1 2 3 4) (4 3 2 1 0) (15 2 1 3 27 5 10)) 0 2 '((0 4) (lambda
+(x) (+ x 100))))
+
+(query '((0 1 2 3 4) (4 3 2 1 0) (15 2 1 3 27 5 10)) 2 3 '(5 (lambda (x)
+(/ x 2)) (lambda (x) (* x 2))))
